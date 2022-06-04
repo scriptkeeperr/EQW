@@ -24,10 +24,19 @@ namespace EQW {
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // EQW
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.WindowText;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.ForeColor = System.Drawing.SystemColors.Window;
+            this.Name = "EQW";
+            this.Text = "EQW";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
