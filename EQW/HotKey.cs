@@ -2,18 +2,18 @@
 
 namespace EQW {
     public class HotKey {
-
-        readonly Tuple<Modifiers, uint> combo;
-
         public HotKey(Modifiers mods, uint key) {
-            combo = new Tuple<Modifiers, uint>(mods, key);
+            Modifiers = mods;
+            Key = key;
         }
 
-        public Modifiers Modifiers => combo.Item1;
-        public uint Key => combo.Item2;
+        public HotKey() {}
+
+        public Modifiers Modifiers { get; set; }
+        public uint Key { get; set; }
 
         public static implicit operator
-            Tuple<Modifiers, uint>(HotKey k) => k.combo;
+            Tuple<Modifiers, uint>(HotKey k) => k;
         public static explicit operator
             HotKey(Tuple<Modifiers, uint> t) => new HotKey(t.Item1, t.Item2);
         public static implicit operator
@@ -24,11 +24,11 @@ namespace EQW {
         static readonly string Shift = "Shift+";
 
         public override string ToString() {
-            var mods = combo.Item1;
+            var mods = Modifiers;
             var str = (int)(mods & Modifiers.SHIFT) > 0 ? Shift : string.Empty;
             str += (int)(mods & Modifiers.CTRL) > 0 ? Ctrl : string.Empty;
             str += (int)(mods & Modifiers.ALT) > 0 ? Alt : string.Empty;
-            str += Enum.GetName(typeof(System.Windows.Forms.Keys), combo.Item2);
+            str += Enum.GetName(typeof(System.Windows.Forms.Keys), Key);
             return $"{str}";
         }
     }

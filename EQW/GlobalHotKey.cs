@@ -11,9 +11,10 @@ namespace EQW {
 
         [DllImport("User32.dll")]
         static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        public static Dictionary<string, IntPtr> Handles { get; private set; } =
-            new Dictionary<string, IntPtr>();
+        
+        public static Dictionary<string, IntPtr> Handles {
+            get; private set;
+        } = new Dictionary<string, IntPtr>();
 
         readonly IntPtr formHandle;
         readonly IntPtr hWnd; // proccess window
