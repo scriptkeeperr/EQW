@@ -35,6 +35,10 @@ namespace EQW {
             Register();
         }
 
+        public static GlobalHotKey Create(IntPtr form, IntPtr p, HotKey hotKey) {
+            return new GlobalHotKey(form, p, hotKey.Modifiers, hotKey.Key);
+        }
+
         public override int GetHashCode() {
             return formHandle.ToInt32() ^ (int)mods ^ (int)key;
         }

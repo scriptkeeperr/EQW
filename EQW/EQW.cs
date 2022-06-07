@@ -3,11 +3,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text.Json;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.ComponentModel;
 
 namespace EQW {
 
@@ -16,17 +13,8 @@ namespace EQW {
         [DllImport("User32.dll", SetLastError = true)]
         static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 
-        public class Profile {
-            public string Name { get; set; }
-            public HotKey HotKey { get; set; }
-            public Profile(string name, HotKey hotKey) {
-                Name = name;
-                HotKey = hotKey;
-            }
-            public Profile() { }
-        }
-
-        static readonly BindingList<Profile> profiles = new BindingList<Profile>();
+        [DllImport("User32.dll")]
+        static extern void SetWindowTextA(IntPtr hWnd, string text);
 
         static readonly List<int> processIDs = new List<int>();
 
@@ -36,12 +24,44 @@ namespace EQW {
 
         string proccessName = "eqgame";
 
+        public EQW() {
+            try {
+                InitializeComponent();
+                textBoxProcName.Text = proccessName;
+
+                FormClosing += EQW_FormClosing;
+                buttonFind.Font = buttonSave.Font = icons;
+                buttonFind.Text = "\uE773";
+                buttonSave.Text = "\uE74E";
+
+                ProfileManager.LoadProfiles();
+                InitializeProcessButtons();
+
+                dataGridView.DataSource = ProfileManager.Profiles;
+            } catch (Exception e) {
+                MessageBox.Show(e.Message);
+            }
+        }
+
         Process[] ProcessFilter(Process[] processes) {
             return processes.Where(p => !processIDs.Contains(p.Id)).ToArray();
         }
 
+        protected override void WndProc(ref Message m) {
+            var hotKey = HotKeyMessage.GetFromMessage(m);
+            if (hotKey != null) {
+                if (!GlobalHotKey.Handles.ContainsKey(hotKey.combo)) {
+                    return;
+                }
+                SwitchToThisWindow(GlobalHotKey.Handles[hotKey.combo], true);
+            }
+            base.WndProc(ref m);
+        }
+
+        #region dynamic layout functions
         void InitializeProcessButtons() {
-            proccessName = textBoxProcName.Text;
+            proccessName = proccessName.Equals(textBoxProcName.Text) ?
+                proccessName : textBoxProcName.Text;
             Process[] processes = Process.GetProcessesByName(proccessName);
             if (processes.Length > 0) {
                 AddControls(processes);
@@ -56,17 +76,18 @@ namespace EQW {
         void AddLabel() {
             if (label == null) {
                 label = new Label() {
-                    Text = $"no {proccessName} running - click here after opening",
-                    Top = buttonFind.Bottom + 12,
+                    Top = 12,
                     Left = 12,
+                    AutoSize = true
                 };
 
                 label.Click += (o, e) => {
                     InitializeProcessButtons();
                 };
-
                 Controls.Add(label);
             }
+
+            label.Text = $"no {proccessName} running - search after opening";
         }
 
         void AddControls(Process[] processes) {
@@ -76,7 +97,9 @@ namespace EQW {
             for (int i = 0; i < procs.Length; i++) {
                 Process p = procs[i];
                 processIDs.Add(p.Id);
+
                 var b = new Button() {
+                    Tag = p.Id,
                     Text = p.Id.ToString(),
                     Top = 4,
                     Left = 4
@@ -105,7 +128,7 @@ namespace EQW {
                     Tag = p.Id
                 };
 
-                foreach (var pf in profiles) {
+                foreach (var pf in ProfileManager.Profiles) {
                     cb.Items.Add(pf.Name);
                 }
 
@@ -115,30 +138,34 @@ namespace EQW {
                 };
 
                 cb.Click += (o, e) => {
-                    if(cb.Items.Count != profiles.Count) {
+                    if (cb.Items.Count != ProfileManager.Profiles.Count) {
                         var selected = cb.SelectedItem;
-                        cb.Items.Clear();
-                        foreach (var pf in profiles) {
-                            cb.Items.Add(pf.Name);
-                        }
-                        if (cb.Items.Contains(selected)) {
-                            cb.SelectedItem = selected;
+                        if (selected != null) {
+                            cb.Items.Clear();
+                            foreach (var pf in ProfileManager.Profiles) {
+                                cb.Items.Add(pf.Name);
+                            }
+                            if (cb.Items.Contains(selected)) {
+                                cb.SelectedItem = selected;
+                            }
                         }
                     }
                 };
 
                 cb.SelectionChangeCommitted += (o, e) => {
-                    var profileHotKey = profiles[cb.SelectedIndex].HotKey;
-                    b.Text = cb.Text;
-                    var ghk = new GlobalHotKey(
-                        Handle, p.MainWindowHandle,
-                        profileHotKey.Modifiers,
-                        profileHotKey.Key
+                    var profile = ProfileManager.Profiles[cb.SelectedIndex];
+                    panel.Tag = GlobalHotKey.Create(
+                        Handle, p.MainWindowHandle, profile.HotKey
                     );
+                    b.Text = cb.Text;
+                    SetWindowTextA(p.MainWindowHandle, profile.Name);
                 };
 
                 del.Click += (o, e) => {
-                    processIDs.Remove((int)panel.Tag);
+                    processIDs.Remove((int)b.Tag);
+                    if (panel.Tag is GlobalHotKey ghk) {
+                        ghk.Dispose();
+                    }
                     b.Dispose();
                     cb.Dispose();
                     del.Dispose();
@@ -149,34 +176,7 @@ namespace EQW {
                 panelProcs.Controls.Add(panel);
             }
         }
-
-        protected override void WndProc(ref Message m) {
-            var hotKey = HotKeyMessage.GetFromMessage(m);
-            if (hotKey != null) {
-                if (!GlobalHotKey.Handles.ContainsKey(hotKey.combo)) {
-                    return;
-                }
-                SwitchToThisWindow(GlobalHotKey.Handles[hotKey.combo], true);
-            }
-            base.WndProc(ref m);
-        }
-
-        public EQW() {
-            InitializeComponent();
-            //profiles.Add(new Profile("Veeno", new HotKey(Modifiers.ALT, (uint)Keys.D1)));
-            //profiles.Add(new Profile("Krizma", new HotKey(Modifiers.ALT, (uint)Keys.D2)));
-            //profiles.Add(new Profile("Xlag", new HotKey(Modifiers.ALT, (uint)Keys.D3)));
-
-            FormClosing += EQW_FormClosing;
-            buttonFind.Font = buttonSave.Font = icons;
-            buttonFind.Text = "\uE773";
-            buttonSave.Text = "\uE74E";
-
-            InitializeProcessButtons();
-            LoadProfiles();
-
-            dataGridView.DataSource = profiles;
-        }
+        #endregion
 
         #region event functions
         private void ButtonSetHotKey_Click(object sender, EventArgs e) {
@@ -222,37 +222,22 @@ namespace EQW {
                 mods |= checkBoxCtrl.Checked ? Modifiers.CTRL : 0;
                 mods |= checkBoxShift.Checked ? Modifiers.SHIFT : 0;
 
-                var p = new Profile(name, new HotKey(mods, key));
-
-                if (name != string.Empty && !profiles.Contains(p)) {
-                    profiles.Add(p);
-                }
-                Save();
-                dataGridView.Invalidate();
-            }
-        }
-
-        static void Save() {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            byte[] json = JsonSerializer.SerializeToUtf8Bytes(profiles, options);
-            string fileName = "profiles.json";
-            File.WriteAllBytes(fileName, json);
-        }
-
-        static void LoadProfiles() {
-            string fileName = "profiles.json";
-            byte[] utf8Json = File.ReadAllBytes(fileName);
-            var utf8Reader = new Utf8JsonReader(utf8Json);
-            if (utf8Json.Length > 0) {
-                var temp = JsonSerializer.Deserialize<BindingList<Profile>>(ref utf8Reader).ToList();
-                profiles.Clear();
-                foreach (var p in temp) {
-                    profiles.Add(p);
+                if (name != string.Empty) {
+                    try {
+                        ProfileManager.Profiles.ToDictionary(p => name);
+                        ProfileManager.Profiles.Add(
+                            new Profile(name, new HotKey(mods, key))
+                        );
+                    } catch (ArgumentException ex) {
+                        MessageBox.Show($"Profile {name} already exists.");
+                    }
+                    ProfileManager.Save();
                 }
             }
         }
 
         private void EQW_FormClosing(object sender, FormClosingEventArgs e) {
+            processIDs.Clear();
             GlobalHotKey.Handles.Clear();
         }
 
