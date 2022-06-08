@@ -7,14 +7,13 @@ namespace EQW {
 
     public static class ProfileManager {
 
-        static readonly BindingList<Profile> profiles =
-            new BindingList<Profile>();
-
-        public static BindingList<Profile> Profiles => profiles;
+        public static BindingList<Profile> Profiles {
+            get; private set;
+        } = new BindingList<Profile>();
 
         public static void Add(Profile profile) {
             if (!Contains(profile)) {
-                profiles.Add(profile);
+                Profiles.Add(profile);
                 Save();
             } else {
                 throw new ProfileExistsException(
@@ -24,7 +23,7 @@ namespace EQW {
         }
 
         public static void Remove(Profile profile) {
-            profiles.Remove(profile);
+            Profiles.Remove(profile);
             Save();
         }
 
@@ -38,10 +37,10 @@ namespace EQW {
         }
 
         public static void Save() {
-            var options = 
+            var options =
                 new JsonSerializerOptions { WriteIndented = true };
-            byte[] json = 
-                JsonSerializer.SerializeToUtf8Bytes(profiles, options);
+            byte[] json =
+                JsonSerializer.SerializeToUtf8Bytes(Profiles, options);
             string fileName = "profiles.json";
             File.WriteAllBytes(fileName, json);
         }
@@ -53,10 +52,11 @@ namespace EQW {
                 byte[] utf8Json = File.ReadAllBytes(fileName);
                 var utf8Reader = new Utf8JsonReader(utf8Json);
                 if (utf8Json.Length > 0) {
-                    var temp = JsonSerializer.Deserialize<BindingList<Profile>>(ref utf8Reader).ToList();
-                    profiles.Clear();
+                    var temp = JsonSerializer.Deserialize<
+                        BindingList<Profile>>(ref utf8Reader).ToList();
+                    Profiles.Clear();
                     foreach (var p in temp) {
-                        profiles.Add(p);
+                        Profiles.Add(p);
                     }
                 }
             }

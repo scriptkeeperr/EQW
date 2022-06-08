@@ -31,14 +31,15 @@ namespace EQW {
             this.checkBoxAlt = new System.Windows.Forms.CheckBox();
             this.checkBoxCtrl = new System.Windows.Forms.CheckBox();
             this.checkBoxShift = new System.Windows.Forms.CheckBox();
-            this.buttonSave = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.buttonSetHotKey = new System.Windows.Forms.Button();
             this.textBoxKey = new System.Windows.Forms.TextBox();
-            this.buttonFind = new System.Windows.Forms.Button();
-            this.textBoxProcName = new System.Windows.Forms.TextBox();
+            this.btnFind = new System.Windows.Forms.Button();
             this.panelProcs = new System.Windows.Forms.FlowLayoutPanel();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.cbProcesses = new System.Windows.Forms.ComboBox();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -91,15 +92,15 @@ namespace EQW {
             this.checkBoxShift.Text = "Shift";
             this.checkBoxShift.UseVisualStyleBackColor = true;
             // 
-            // buttonSave
+            // btnSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(572, 39);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(40, 23);
-            this.buttonSave.TabIndex = 8;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
+            this.btnSave.Location = new System.Drawing.Point(572, 39);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(40, 23);
+            this.btnSave.TabIndex = 8;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // buttonSetHotKey
             // 
@@ -123,25 +124,16 @@ namespace EQW {
             this.textBoxKey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBoxKey_KeyUp);
             this.textBoxKey.Leave += new System.EventHandler(this.TextBoxKey_Leave);
             // 
-            // buttonFind
+            // btnFind
             // 
-            this.buttonFind.Location = new System.Drawing.Point(12, 37);
-            this.buttonFind.Name = "buttonFind";
-            this.buttonFind.Size = new System.Drawing.Size(75, 23);
-            this.buttonFind.TabIndex = 10;
-            this.buttonFind.Text = "Find";
-            this.buttonFind.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.buttonFind.UseVisualStyleBackColor = true;
-            this.buttonFind.Click += new System.EventHandler(this.ButtonFind_Click);
-            // 
-            // textBoxProcName
-            // 
-            this.textBoxProcName.Location = new System.Drawing.Point(90, 37);
-            this.textBoxProcName.Name = "textBoxProcName";
-            this.textBoxProcName.Size = new System.Drawing.Size(212, 23);
-            this.textBoxProcName.TabIndex = 11;
-            this.textBoxProcName.Text = "firefox";
-            this.textBoxProcName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxProcName_KeyDown);
+            this.btnFind.Location = new System.Drawing.Point(12, 37);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(75, 23);
+            this.btnFind.TabIndex = 10;
+            this.btnFind.Text = "Find";
+            this.btnFind.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.ButtonFind_Click);
             // 
             // panelProcs
             // 
@@ -180,17 +172,37 @@ namespace EQW {
             this.notifyIcon.Text = "EQW";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
             // 
+            // cbProcesses
+            // 
+            this.cbProcesses.FormattingEnabled = true;
+            this.cbProcesses.Location = new System.Drawing.Point(90, 37);
+            this.cbProcesses.Name = "cbProcesses";
+            this.cbProcesses.Size = new System.Drawing.Size(180, 23);
+            this.cbProcesses.TabIndex = 13;
+            this.cbProcesses.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ComboBoxProcName_KeyDown);
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(279, 37);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(23, 23);
+            this.btnRefresh.TabIndex = 14;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            // 
             // EQW
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.cbProcesses);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.panelProcs);
-            this.Controls.Add(this.textBoxProcName);
-            this.Controls.Add(this.buttonFind);
+            this.Controls.Add(this.btnFind);
             this.Controls.Add(this.textBoxKey);
-            this.Controls.Add(this.buttonSave);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.checkBoxShift);
             this.Controls.Add(this.checkBoxCtrl);
             this.Controls.Add(this.checkBoxAlt);
@@ -213,14 +225,15 @@ namespace EQW {
         private System.Windows.Forms.CheckBox checkBoxAlt;
         private System.Windows.Forms.CheckBox checkBoxCtrl;
         private System.Windows.Forms.CheckBox checkBoxShift;
-        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button buttonSetHotKey;
         private System.Windows.Forms.TextBox textBoxKey;
-        private System.Windows.Forms.Button buttonFind;
-        private System.Windows.Forms.TextBox textBoxProcName;
+        private System.Windows.Forms.Button btnFind;
         private System.Windows.Forms.FlowLayoutPanel panelProcs;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.ComboBox cbProcesses;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
 

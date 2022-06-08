@@ -27,38 +27,26 @@ namespace EQW {
         public EQW() {
             try {
                 InitializeComponent();
-                textBoxProcName.Text = proccessName;
+                cbProcesses.Text = proccessName;
                 FormClosing += EQW_FormClosing;
                 ProfileManager.LoadProfiles();
+                InitializeProcessList();
                 InitializeProcessPanels();
                 InitializeDataGridView();
-                buttonFind.Font = buttonSave.Font =
-                    dataGridView.Font = icons;
-                buttonFind.Text = "\uE773";
-                buttonSave.Text = "\uE74E";
+                btnFind.Font = btnSave.Font =
+                btnRefresh.Font = dataGridView.Font = icons;
+                btnFind.Text = "\uE773";
+                btnSave.Text = "\uE74E";
+                btnRefresh.Text = "\uE72C";
             } catch (Exception e) {
                 MessageBox.Show(e.Message);
             }
         }
 
-        void InitializeDataGridView() {
-            dataGridView.Font = icons;
-            dataGridView.DataSource = ProfileManager.Profiles;
-
-            var delCol = new DataGridViewButtonColumn() {
-                Name = "Delete",
-                HeaderText = string.Empty,
-                Text = "\uE74D", // trash can
-                UseColumnTextForButtonValue = true,
-                Width = dataGridView.ColumnHeadersHeight,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
-            };
-
-            dataGridView.Columns.Add(delCol);
-        }
-
         Process[] ProcessFilter(Process[] processes) {
-            return processes.Where(p => !processIDs.Contains(p.Id)).ToArray();
+            return processes.Where(
+                p => !processIDs.Contains(p.Id)
+            ).ToArray();
         }
 
         protected override void WndProc(ref Message m) {
@@ -74,12 +62,35 @@ namespace EQW {
 
         #region dynamic layout functions
 
+        void InitializeDataGridView() {
+            dataGridView.Font = icons;
+            dataGridView.DataSource = ProfileManager.Profiles;
+            dataGridView.Columns.Add(new DataGridViewButtonColumn() {
+                Name = "Delete",
+                HeaderText = string.Empty,
+                Text = "\uE74D", // trash can
+                UseColumnTextForButtonValue = true,
+                Width = dataGridView.ColumnHeadersHeight,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            });
+        }
+
+        void InitializeProcessList() {
+            var allProcs = Process.GetProcesses().Where(
+                p => p.MainWindowHandle != IntPtr.Zero
+            ).ToArray();
+
+            cbProcesses.Items.Clear();
+            foreach (Process p in allProcs) {
+                cbProcesses.Items.Add(p.ProcessName);
+            }
+        }
+
         void InitializeProcessPanels() {
-            proccessName = proccessName.Equals(textBoxProcName.Text) ?
-                proccessName : textBoxProcName.Text;
-            Process[] processes = Process.GetProcessesByName(proccessName);
+            Process[] processes = 
+                Process.GetProcessesByName(cbProcesses.Text);
             if (processes.Length > 0) {
-                AddControls(processes);
+                AddPanels(processes);
                 if (label != null) {
                     label.Dispose();
                 }
@@ -89,6 +100,11 @@ namespace EQW {
         }
 
         void AddLabel() {
+            if (!proccessName.Equals(cbProcesses.Text)) {
+                label = null;
+                proccessName = cbProcesses.Text;
+            }
+
             if (label == null) {
                 label = new Label() {
                     Top = 12,
@@ -105,7 +121,7 @@ namespace EQW {
             label.Text = $"no {proccessName} running";
         }
 
-        void AddControls(Process[] processes) {
+        void AddPanels(Process[] processes) {
             var procs = ProcessFilter(processes);
             Panel[] panels = new Panel[procs.Length];
 
@@ -209,7 +225,7 @@ namespace EQW {
             if ((e.KeyCode & (Keys.ControlKey | Keys.Menu | Keys.ShiftKey)) != e.KeyCode) {
                 textBoxKey.Text = Enum.GetName(typeof(Keys), e.KeyCode);
                 textBoxKey.Tag = (uint)e.KeyCode;
-                buttonSave.Focus();
+                btnSave.Focus();
             }
         }
 
@@ -264,7 +280,7 @@ namespace EQW {
             InitializeProcessPanels();
         }
 
-        private void TextBoxProcName_KeyDown(object sender, KeyEventArgs e) {
+        private void ComboBoxProcName_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) {
                 InitializeProcessPanels();
             }
@@ -295,8 +311,11 @@ namespace EQW {
             }
         }
 
-        #endregion
+        private void BtnRefresh_Click(object sender, EventArgs e) {
+            InitializeProcessList();
+        }
 
+        #endregion
 
     }
 }
