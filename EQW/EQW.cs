@@ -27,6 +27,8 @@ namespace EQW {
         public EQW() {
             try {
                 InitializeComponent();
+                MinimumSize = new Size(640, 240);
+                EQW_Resize(this, EventArgs.Empty);
                 cbProcesses.Text = proccessName;
                 FormClosing += EQW_FormClosing;
                 ProfileManager.LoadProfiles();
@@ -87,7 +89,7 @@ namespace EQW {
         }
 
         void InitializeProcessPanels() {
-            Process[] processes = 
+            Process[] processes =
                 Process.GetProcessesByName(cbProcesses.Text);
             if (processes.Length > 0) {
                 AddPanels(processes);
@@ -154,6 +156,8 @@ namespace EQW {
 
                 var panel = new Panel() {
                     Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
                     Width = panelProcs.Width - 40,
                     Height = cb.Height + 8,
                     Tag = p.Id
@@ -308,6 +312,22 @@ namespace EQW {
             if (WindowState == FormWindowState.Minimized) {
                 Hide();
                 notifyIcon.Visible = true;
+            } else {
+                panelProcs.Width = Width / 2 - 24;
+                panelProcs.Height = Height - btnFind.Bottom - 64;
+                panelProcs.Top = btnFind.Bottom + 12;
+                dataGridView.Width = panelProcs.Width - 6;
+                dataGridView.Height = panelProcs.Height;
+                dataGridView.Top = panelProcs.Top;
+                dataGridView.Left = panelProcs.Right + 12;
+                pnlProfile1.Left = dataGridView.Left;
+                if(dataGridView.Width > pnlProfile1.Width * 2) {
+                    pnlProfile2.Left = pnlProfile1.Right + 4;
+                    pnlProfile1.Top = pnlProfile2.Top;
+                } else {
+                    pnlProfile2.Left = dataGridView.Left;
+                    pnlProfile1.Top = 12;
+                }
             }
         }
 

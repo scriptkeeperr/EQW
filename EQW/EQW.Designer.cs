@@ -40,14 +40,18 @@ namespace EQW {
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.cbProcesses = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.pnlProfile1 = new System.Windows.Forms.Panel();
+            this.pnlProfile2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            this.pnlProfile1.SuspendLayout();
+            this.pnlProfile2.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelAddProfile
             // 
             this.labelAddProfile.AutoSize = true;
             this.labelAddProfile.Font = new System.Drawing.Font("PMingLiU-ExtB", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelAddProfile.Location = new System.Drawing.Point(322, 10);
+            this.labelAddProfile.Location = new System.Drawing.Point(3, 3);
             this.labelAddProfile.Name = "labelAddProfile";
             this.labelAddProfile.Size = new System.Drawing.Size(79, 16);
             this.labelAddProfile.TabIndex = 0;
@@ -55,17 +59,17 @@ namespace EQW {
             // 
             // textBoxProfileName
             // 
-            this.textBoxProfileName.Location = new System.Drawing.Point(407, 8);
+            this.textBoxProfileName.Location = new System.Drawing.Point(83, 1);
             this.textBoxProfileName.MaxLength = 100;
             this.textBoxProfileName.Name = "textBoxProfileName";
             this.textBoxProfileName.PlaceholderText = "name";
-            this.textBoxProfileName.Size = new System.Drawing.Size(123, 23);
+            this.textBoxProfileName.Size = new System.Drawing.Size(130, 23);
             this.textBoxProfileName.TabIndex = 1;
             // 
             // checkBoxAlt
             // 
             this.checkBoxAlt.AutoSize = true;
-            this.checkBoxAlt.Location = new System.Drawing.Point(330, 41);
+            this.checkBoxAlt.Location = new System.Drawing.Point(6, 3);
             this.checkBoxAlt.Name = "checkBoxAlt";
             this.checkBoxAlt.Size = new System.Drawing.Size(41, 19);
             this.checkBoxAlt.TabIndex = 3;
@@ -75,7 +79,7 @@ namespace EQW {
             // checkBoxCtrl
             // 
             this.checkBoxCtrl.AutoSize = true;
-            this.checkBoxCtrl.Location = new System.Drawing.Point(375, 41);
+            this.checkBoxCtrl.Location = new System.Drawing.Point(51, 3);
             this.checkBoxCtrl.Name = "checkBoxCtrl";
             this.checkBoxCtrl.Size = new System.Drawing.Size(45, 19);
             this.checkBoxCtrl.TabIndex = 4;
@@ -85,7 +89,7 @@ namespace EQW {
             // checkBoxShift
             // 
             this.checkBoxShift.AutoSize = true;
-            this.checkBoxShift.Location = new System.Drawing.Point(423, 41);
+            this.checkBoxShift.Location = new System.Drawing.Point(99, 3);
             this.checkBoxShift.Name = "checkBoxShift";
             this.checkBoxShift.Size = new System.Drawing.Size(50, 19);
             this.checkBoxShift.TabIndex = 5;
@@ -94,7 +98,7 @@ namespace EQW {
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(572, 39);
+            this.btnSave.Location = new System.Drawing.Point(255, 1);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(40, 23);
             this.btnSave.TabIndex = 8;
@@ -104,7 +108,7 @@ namespace EQW {
             // 
             // buttonSetHotKey
             // 
-            this.buttonSetHotKey.Location = new System.Drawing.Point(536, 7);
+            this.buttonSetHotKey.Location = new System.Drawing.Point(219, 1);
             this.buttonSetHotKey.Name = "buttonSetHotKey";
             this.buttonSetHotKey.Size = new System.Drawing.Size(76, 23);
             this.buttonSetHotKey.TabIndex = 2;
@@ -114,7 +118,7 @@ namespace EQW {
             // 
             // textBoxKey
             // 
-            this.textBoxKey.Location = new System.Drawing.Point(476, 39);
+            this.textBoxKey.Location = new System.Drawing.Point(159, 1);
             this.textBoxKey.Name = "textBoxKey";
             this.textBoxKey.PlaceholderText = "key";
             this.textBoxKey.Size = new System.Drawing.Size(90, 23);
@@ -137,32 +141,28 @@ namespace EQW {
             // 
             // panelProcs
             // 
-            this.panelProcs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelProcs.AutoScroll = true;
             this.panelProcs.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelProcs.Location = new System.Drawing.Point(12, 70);
             this.panelProcs.Name = "panelProcs";
             this.panelProcs.Padding = new System.Windows.Forms.Padding(4);
-            this.panelProcs.Size = new System.Drawing.Size(290, 359);
+            this.panelProcs.Size = new System.Drawing.Size(296, 356);
             this.panelProcs.TabIndex = 0;
             // 
             // dataGridView
             // 
             this.dataGridView.AllowUserToAddRows = false;
             this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new System.Drawing.Point(330, 70);
+            this.dataGridView.Location = new System.Drawing.Point(314, 70);
             this.dataGridView.MultiSelect = false;
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
             this.dataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridView.RowTemplate.Height = 25;
-            this.dataGridView.Size = new System.Drawing.Size(282, 359);
+            this.dataGridView.Size = new System.Drawing.Size(298, 356);
             this.dataGridView.TabIndex = 12;
             this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentClick);
             // 
@@ -191,30 +191,49 @@ namespace EQW {
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
+            // pnlProfile1
+            // 
+            this.pnlProfile1.Controls.Add(this.labelAddProfile);
+            this.pnlProfile1.Controls.Add(this.textBoxProfileName);
+            this.pnlProfile1.Controls.Add(this.buttonSetHotKey);
+            this.pnlProfile1.Location = new System.Drawing.Point(314, 12);
+            this.pnlProfile1.Name = "pnlProfile1";
+            this.pnlProfile1.Size = new System.Drawing.Size(298, 25);
+            this.pnlProfile1.TabIndex = 15;
+            // 
+            // pnlProfile2
+            // 
+            this.pnlProfile2.Controls.Add(this.btnSave);
+            this.pnlProfile2.Controls.Add(this.textBoxKey);
+            this.pnlProfile2.Controls.Add(this.checkBoxAlt);
+            this.pnlProfile2.Controls.Add(this.checkBoxCtrl);
+            this.pnlProfile2.Controls.Add(this.checkBoxShift);
+            this.pnlProfile2.Location = new System.Drawing.Point(314, 42);
+            this.pnlProfile2.Name = "pnlProfile2";
+            this.pnlProfile2.Size = new System.Drawing.Size(298, 25);
+            this.pnlProfile2.TabIndex = 0;
+            // 
             // EQW
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.pnlProfile2);
+            this.Controls.Add(this.pnlProfile1);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.cbProcesses);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.panelProcs);
             this.Controls.Add(this.btnFind);
-            this.Controls.Add(this.textBoxKey);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.checkBoxShift);
-            this.Controls.Add(this.checkBoxCtrl);
-            this.Controls.Add(this.checkBoxAlt);
-            this.Controls.Add(this.buttonSetHotKey);
-            this.Controls.Add(this.textBoxProfileName);
-            this.Controls.Add(this.labelAddProfile);
             this.Name = "EQW";
             this.Text = "EQW";
             this.Resize += new System.EventHandler(this.EQW_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            this.pnlProfile1.ResumeLayout(false);
+            this.pnlProfile1.PerformLayout();
+            this.pnlProfile2.ResumeLayout(false);
+            this.pnlProfile2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -234,6 +253,8 @@ namespace EQW {
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ComboBox cbProcesses;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Panel pnlProfile1;
+        private System.Windows.Forms.Panel pnlProfile2;
     }
 }
 
