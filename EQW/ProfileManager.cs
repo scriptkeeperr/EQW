@@ -1,21 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 
 namespace EQW {
+
     public static class ProfileManager {
 
-        static readonly BindingList<Profile> profiles = new BindingList<Profile>();
+        static readonly BindingList<Profile> profiles =
+            new BindingList<Profile>();
 
         public static BindingList<Profile> Profiles => profiles;
 
+        public static void Add(Profile profile) {
+            if (!Contains(profile)) {
+                profiles.Add(profile);
+                Save();
+            } else {
+                throw new ProfileExistsException(
+                    $"Profile: {profile} already exists."
+                );
+            }
+        }
+
+        public static void Remove(Profile profile) {
+            profiles.Remove(profile);
+            Save();
+        }
+
+        public static bool Contains(Profile profile) {
+            foreach (var p in Profiles) {
+                if (p.Equals(profile)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static void Save() {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            byte[] json = JsonSerializer.SerializeToUtf8Bytes(profiles, options);
+            var options = 
+                new JsonSerializerOptions { WriteIndented = true };
+            byte[] json = 
+                JsonSerializer.SerializeToUtf8Bytes(profiles, options);
             string fileName = "profiles.json";
             File.WriteAllBytes(fileName, json);
         }

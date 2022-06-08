@@ -28,19 +28,33 @@ namespace EQW {
             try {
                 InitializeComponent();
                 textBoxProcName.Text = proccessName;
-
                 FormClosing += EQW_FormClosing;
-                buttonFind.Font = buttonSave.Font = icons;
+                ProfileManager.LoadProfiles();
+                InitializeProcessPanels();
+                InitializeDataGridView();
+                buttonFind.Font = buttonSave.Font =
+                    dataGridView.Font = icons;
                 buttonFind.Text = "\uE773";
                 buttonSave.Text = "\uE74E";
-
-                ProfileManager.LoadProfiles();
-                InitializeProcessButtons();
-
-                dataGridView.DataSource = ProfileManager.Profiles;
             } catch (Exception e) {
                 MessageBox.Show(e.Message);
             }
+        }
+
+        void InitializeDataGridView() {
+            dataGridView.Font = icons;
+            dataGridView.DataSource = ProfileManager.Profiles;
+
+            var delCol = new DataGridViewButtonColumn() {
+                Name = "Delete",
+                HeaderText = string.Empty,
+                Text = "\uE74D", // trash can
+                UseColumnTextForButtonValue = true,
+                Width = dataGridView.ColumnHeadersHeight,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
+
+            dataGridView.Columns.Add(delCol);
         }
 
         Process[] ProcessFilter(Process[] processes) {
@@ -59,7 +73,8 @@ namespace EQW {
         }
 
         #region dynamic layout functions
-        void InitializeProcessButtons() {
+
+        void InitializeProcessPanels() {
             proccessName = proccessName.Equals(textBoxProcName.Text) ?
                 proccessName : textBoxProcName.Text;
             Process[] processes = Process.GetProcessesByName(proccessName);
@@ -82,12 +97,12 @@ namespace EQW {
                 };
 
                 label.Click += (o, e) => {
-                    InitializeProcessButtons();
+                    InitializeProcessPanels();
                 };
                 Controls.Add(label);
             }
 
-            label.Text = $"no {proccessName} running - search after opening";
+            label.Text = $"no {proccessName} running";
         }
 
         void AddControls(Process[] processes) {
@@ -176,9 +191,11 @@ namespace EQW {
                 panelProcs.Controls.Add(panel);
             }
         }
+
         #endregion
 
         #region event functions
+
         private void ButtonSetHotKey_Click(object sender, EventArgs e) {
             buttonSetHotKey.Text = "Listening";
             if (!textBoxKey.Focused) {
@@ -200,6 +217,12 @@ namespace EQW {
             checkBoxAlt.Checked = e.Alt;
             checkBoxCtrl.Checked = e.Control;
             checkBoxShift.Checked = e.Shift;
+        }
+
+        private void CheckBoxes(Modifiers m) {
+            checkBoxAlt.Checked = (Modifiers.ALT & m) > 0;
+            checkBoxCtrl.Checked = (Modifiers.CTRL & m) > 0;
+            checkBoxShift.Checked = (Modifiers.SHIFT & m) > 0;
         }
 
         private void TextBoxKey_Leave(object sender, EventArgs e) {
@@ -224,14 +247,10 @@ namespace EQW {
 
                 if (name != string.Empty) {
                     try {
-                        ProfileManager.Profiles.ToDictionary(p => name);
-                        ProfileManager.Profiles.Add(
-                            new Profile(name, new HotKey(mods, key))
-                        );
-                    } catch (ArgumentException ex) {
-                        MessageBox.Show($"Profile {name} already exists.");
+                        ProfileManager.Add(new Profile(name, new HotKey(mods, key)));
+                    } catch (ProfileExistsException ex) {
+                        MessageBox.Show($"{ex}");
                     }
-                    ProfileManager.Save();
                 }
             }
         }
@@ -242,15 +261,42 @@ namespace EQW {
         }
 
         private void ButtonFind_Click(object sender, EventArgs e) {
-            InitializeProcessButtons();
+            InitializeProcessPanels();
         }
 
         private void TextBoxProcName_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) {
-                InitializeProcessButtons();
+                InitializeProcessPanels();
             }
         }
+
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0) {
+                var profile = ProfileManager.Profiles[e.RowIndex];
+                textBoxProfileName.Text = profile.Name;
+                textBoxKey.Text = Enum.GetName(typeof(Keys), profile.HotKey.Key);
+                CheckBoxes(profile.HotKey.Modifiers);
+                if (e.ColumnIndex == dataGridView.Columns["Delete"].Index) {
+                    ProfileManager.Remove(profile);
+                }
+            }
+        }
+
+        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
+            Show();
+            WindowState = FormWindowState.Normal;
+            notifyIcon.Visible = false;
+        }
+
+        private void EQW_Resize(object sender, EventArgs e) {
+            if (WindowState == FormWindowState.Minimized) {
+                Hide();
+                notifyIcon.Visible = true;
+            }
+        }
+
         #endregion
+
 
     }
 }

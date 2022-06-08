@@ -24,6 +24,8 @@ namespace EQW {
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EQW));
             this.labelAddProfile = new System.Windows.Forms.Label();
             this.textBoxProfileName = new System.Windows.Forms.TextBox();
             this.checkBoxAlt = new System.Windows.Forms.CheckBox();
@@ -36,6 +38,7 @@ namespace EQW {
             this.textBoxProcName = new System.Windows.Forms.TextBox();
             this.panelProcs = new System.Windows.Forms.FlowLayoutPanel();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -169,6 +172,13 @@ namespace EQW {
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.Size = new System.Drawing.Size(282, 359);
             this.dataGridView.TabIndex = 12;
+            this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentClick);
+            // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "EQW";
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
             // 
             // EQW
             // 
@@ -189,6 +199,7 @@ namespace EQW {
             this.Controls.Add(this.labelAddProfile);
             this.Name = "EQW";
             this.Text = "EQW";
+            this.Resize += new System.EventHandler(this.EQW_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -209,6 +220,7 @@ namespace EQW {
         private System.Windows.Forms.TextBox textBoxProcName;
         private System.Windows.Forms.FlowLayoutPanel panelProcs;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
     }
 }
 
